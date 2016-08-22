@@ -1,0 +1,261 @@
+package com.gpf.game.baccarat.protocol;
+
+//import "platform/common/PlatformCommon.proto";
+
+option java_package = "com.gpf.game.niuniu.protocol";
+option java_outer_classname = "NiuniuProtocol";
+
+option optimize_for = SPEED;
+
+/*
+ * enum
+ */
+enum PeBaccaratBetPlace {
+	/** 牌型 */
+	BANKER = 1;
+	PLAYER = 2;
+	TIE = 3;
+	BANKER_PAIR = 4;
+	PLAYER_PAIR = 5;
+	BIG = 6;
+	SMALL = 7;
+	SUPER6 = 8;
+}
+
+enum PeBaccaratResult {
+	/** 牌型 */
+	WIN = 1;
+	LOSE = 2;
+	DRAW = 3;
+}
+
+enum PeBaccaratLimitType {
+	/** 牌型 */
+	NORMAL = 1;
+	HIGH = 2;
+}
+
+/*
+ * structur 
+ */
+message PsBaccaratPlayerInfo{
+	optional int32 playerId = 1;
+	optional int32 nickname = 2;
+	optional int32 money = 3;
+	optional int32 position = 4;
+	optional int32 header = 5;
+}
+
+message PsBaccaratBetPlaceInfo{
+	optional PeBaccaratBetPlace betPlace = 1;
+	repeated int32 totalMoney = 2;
+	repeated int32 myMoney = 3;
+	optional int32 canBet = 4;
+}
+
+message PsBaccaratGameResultInfo{
+	repeated PsBaccaratPlayerResultItemInfo playeResultInfoList = 1;
+	repeated PsBaccaratBetResultItemInfo betResultInfoList = 2;
+	repeated PeBaccaratBetPlace gameResultInfoList = 3;
+}
+
+message PsBaccaratBetResultItemInfo{
+	optional PeBaccaratBetPlace betPlace = 1;
+	optional PeBaccaratResult result = 2;
+}
+
+message PsBaccaratPlayerResultItemInfo{
+	optional int32 playerId = 1;
+	repeated PsBaccaratPlayerBetResultInfo playerBetResultInfoList = 2;
+	optional int32 resultMoneyBefourTax = 3;
+	optional int32 resultMoneyAfterTax = 4;
+	optional int32 money = 5;
+}
+
+message PsBaccaratPlayerBetResultInfo{
+	optional int32 betPlace = 1;
+	optional int32 betMoney = 2;
+	optional int32 resultMoneyBefourTax = 3;
+	optional int32 resultMoneyAfterTax = 4;
+}
+
+message PsBaccaratGameLimitInfo{
+	optional PeBaccaratLimitType type = 1;
+	optional int32 value = 2;
+}
+
+//==== 等待
+
+/**
+ * @Message(10100)
+ */
+message ScBaccaratNotifyWait {
+	/** 通知玩家进入等待 */
+	optional int32 actionTime = 1;
+}
+
+//==== 下注
+
+/**
+ * @Message(10101)
+ */
+message ScBaccaratNotifyBet {
+	/** 通知玩家进入下注操作 */
+	optional int32 actionTime = 1;
+	repeated PsBaccaratBetPlaceInfo rebetInfoList = 2;
+}
+
+/**
+ * @Message(10102)
+ */
+message CsBaccaratPlayerBetAction {
+	/** 发送玩家下注操作 */
+	/**抢庄动作 1:抢庄 2:不抢庄 3:金币不足抢庄 */
+	optional PeBaccaratBetPlace betPlace = 1;
+	optional int32 betMoney = 2;
+}
+
+/**
+ * @Message(10103)
+ */
+message ScBaccaratPlayerBetActionReturn {
+	/** 玩家下注操作结果返回 */
+	/**抢庄结果 1:成功 2:失败-玩家钱不够 3:失败-已达到限红 4:失败-已不在下注时间 */
+	optional int32 result = 1;
+	optional int32 betMoney = 2;
+	optional PsBaccaratBetPlaceInfo betPlaceInfo = 3;
+	optional PsBaccaratPlayerInfo playerInfo = 4;
+}
+
+/**
+ * @Message(10104)
+ */
+message ScBaccaratNotifyPlayerBetActionInfo {
+	/** 通知下注信息 */
+	optional PsBaccaratPlayerInfo playerInfo = 1;
+	optional int32 betMoney = 2;
+	optional PsBaccaratBetPlaceInfo betPlaceInfo = 3;
+}
+
+/**
+ * @Message(10105)
+ */
+message CsBaccaratConfirmBet {
+	/** 确认投注 */
+	
+}
+
+/**
+ * @Message(10106)
+ */
+message CsBaccaratCancelBet {
+	/** 取消投注 */
+	
+}
+
+/**
+ * @Message(10107)
+ */
+message ScBaccaratCancelBetReturn {
+	/** 取消投注返回 */
+	/**抢庄结果 1:成功 2:失败 无可取消操作 3:失败 游戏已不在下注阶段 */
+	optional int32 result = 1;
+	optional PsBaccaratPlayerInfo playerInfo = 2;
+	optional int32 cancelBetMoney = 3;
+	optional PsBaccaratBetPlaceInfo betPlaceInfo = 4;
+}
+
+/**
+ * @Message(10108)
+ */
+message CsBaccaratCancelAllBet {
+	/** 取消全部投注 */
+	
+}
+
+/**
+ * @Message(10109)
+ */
+message ScBaccaratCancelAllBetReturn {
+	/** 取消投注返回 */
+	/**抢庄结果 1:成功 2:失败 无可取消操作 3:失败 游戏已不在下注阶段 */
+	optional int32 result = 1;
+	optional PsBaccaratPlayerInfo playerInfo = 2;
+	repeated PsBaccaratBetPlaceInfo betPlaceInfoList = 3;
+}
+
+/**
+ * @Message(10110)
+ */
+message CsBaccaratRebet {
+	/** 取消全部投注 */
+	
+}
+
+/**
+ * @Message(10111)
+ */
+message ScBaccaratRebetReturn {
+	/** 取消投注返回 */
+	/**抢庄结果 1:成功 2:失败-玩家钱不够 3:失败-已达到限红 4:失败-已不在下注时间 */
+	optional int32 result = 1;
+	optional PsBaccaratPlayerInfo playerInfo = 2;
+	repeated PsBaccaratBetPlaceInfo betPlaceInfoList = 3;
+}
+
+//==== 发牌比牌
+
+/**
+ * @Message(10112)
+ */
+message ScBaccaratNotifyCard {
+	/** 通知发牌 */
+	optional int32 actionTime = 1;
+	optional int32 reason = 2;
+	repeated int32 playerCardList = 3;
+	repeated int32 bankerCardList = 4;
+	optional int32 playerCardNumber = 5;
+	optional int32 bankerCardNumber = 6;
+	optional int32 lastCardAmount = 7;
+}
+
+//==== 结果
+
+/**
+ * @Message(10113)
+ */
+message ScBaccaratNotifyGameResultInfo {
+	/** 通知玩家结果 */
+	optional PsBaccaratGameResultInfo gameResultInfo = 1;
+	optional int32 needShuffleCardNextGame = 2;
+	optional int32 lastCardAmount = 3;
+}
+
+/**
+ * @Message(10114)
+ */
+message CsBaccaratEnterNextGame {
+	/** 进入下一场游戏 */
+	
+}
+
+//==== 其他
+
+/**
+ * @Message(10115)
+ */
+message CsBaccaratGetGameInfo {
+	/** 获取游戏信息 */
+	
+}
+
+/**
+ * @Message(10116)
+ */
+message ScBaccaratGetGameInfoReturn  {
+	/** 获取游戏信息返回 */
+	repeated PsBaccaratGameResultInfo gameResultInfoList = 1;
+	repeated PsBaccaratGameLimitInfo gameLimitInfoList = 2;
+	optional int32 lastCardAmount = 3;
+	optional int32 maxCardAmount = 4;
+}

@@ -1,0 +1,27 @@
+package com.gpf.common.protocol;
+
+option java_package = "com.gpf.common.protocol";
+option java_outer_classname = "HelloWorldProtocol";
+
+option optimize_for = SPEED;
+
+
+/**
+ *	测试 c - s
+ */
+message CsHelloWorld {
+	optional int32 int0 = 1;	
+	optional int32 int1 = 2;	
+	
+	optional string str0 = 3;
+	optional string str1 = 4;
+
+	repeated int32 intArray0 = 5;
+}
+
+message ScHelloWorld {
+	optional int32 intSumResult = 1;
+	optional int32 intMultiResult = 2;
+
+	optional string strResult = 3;
+}
